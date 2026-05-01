@@ -12,6 +12,7 @@ import 'prompt_settings_screen.dart';
 import 'digest_settings_screen.dart';
 import 'glance_screen.dart';
 import 'rules_screen.dart';
+import 'webhooks_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -112,6 +113,20 @@ class HomeScreen extends StatelessWidget {
             trailing: const Icon(Icons.chevron_right, color: Colors.white38),
             onTap: () => Navigator.push(context,
                 MaterialPageRoute(builder: (_) => const RulesScreen())),
+          ),
+        ),
+        const SizedBox(height: 8),
+        _Card(
+          child: ListTile(
+            leading: const Icon(Icons.webhook, color: Color(0xFF7C4DFF)),
+            title: const Text('Webhooks'),
+            subtitle: const Text(
+              'Send notifications to Home Assistant, IFTTT, Zapier, Node-RED',
+              style: TextStyle(color: Colors.white38, fontSize: 13),
+            ),
+            trailing: const Icon(Icons.chevron_right, color: Colors.white38),
+            onTap: () => Navigator.push(context,
+                MaterialPageRoute(builder: (_) => const WebhooksScreen())),
           ),
         ),
         const SizedBox(height: 8),

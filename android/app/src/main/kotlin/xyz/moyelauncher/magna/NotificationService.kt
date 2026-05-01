@@ -794,6 +794,58 @@ class NotificationService : NotificationListenerService() {
                 "summarize" -> {
                     ActionResult.SUMMARIZE
                 }
+                "webhook" -> {
+                    val webhookId = params.optString("webhookId", "")
+                    if (webhookId.isNotEmpty()) {
+                        executor.execute { executeWebhook(webhookId, pkg, title, text) }
+                    }
+                    ActionResult.PROCESSED
+                }
+                "copyOtp" -> {
+                    val otpRegex = Regex("\\b\\d{4,8}\\b")
+                    val match = otpRegex.find(text)
+                    if (match != null) {
+                        val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
+                        clipboard.setPrimaryClip(android.content.ClipData.newPlainText("OTP", match.value))
+                        log("info", "Action: copied OTP ${match.value} from $pkg")
+                    }
+                    ActionResult.PROCESSED
+                }
+                "ttsReadout" -> {
+                    val tts = android.speech.tts.TextToSpeech(applicationContext) { status ->
+                        if (status == android.speech.tts.TextToSpeech.SUCCESS) {
+                            android.speech.tts.TextToSpeech(applicationContext).speak(
+                                "$title. $text", android.speech.tts.TextToSpeech.QUEUE_FLUSH, null, null
+                            )
+                        }
+                    }
+                    log("info", "Action: TTS readout for $pkg")
+                    ActionResult.PROCESSED
+                }
+                "customVibration" -> {
+                    val patternName = params.optString("pattern", "heartbeat")
+                    val pattern = when (patternName) {
+                        "heartbeat" -> longArrayOf(0, 200, 100, 200)
+                        "sos" -> longArrayOf(0, 100, 100, 100, 300, 100, 100, 100)
+                        "doubleTap" -> longArrayOf(0, 50, 100, 50)
+                        else -> longArrayOf(0, 200, 100, 200)
+                    }
+                    val vibrator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                        val vm = getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as android.os.VibratorManager
+                        vm.defaultVibrator
+                    } else {
+                        @Suppress("DEPRECATION")
+                        getSystemService(Context.VIBRATOR_SERVICE) as android.os.Vibrator
+                    }
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        vibrator.vibrate(android.os.VibrationEffect.createWaveform(pattern, -1))
+                    } else {
+                        @Suppress("DEPRECATION")
+                        vibrator.vibrate(pattern, -1)
+                    }
+                    log("info", "Action: custom vibration ($patternName) for $pkg")
+                    ActionResult.PROCESSED
+                }
                 else -> ActionResult.PROCESSED
             }
         } catch (e: Exception) {
@@ -2144,6 +2196,64 @@ Provide a clear, concise summary."""
             // Disable caching and connection reuse which can cause issues
             useCaches = false
             defaultUseCaches = false
+        }
+    }
+
+    // ── Webhook execution ──────────────────────────────────────────────────────
+
+    private fun executeWebhook(webhookId: String, pkg: String, title: String, text: String) {
+        try {
+            val raw = spStr("magna_webhooks", "[]")
+            val arr = JSONArray(raw)
+            var config: JSONObject? = null
+            for (i in 0 until arr.length()) {
+                val wh = arr.getJSONObject(i)
+                if (wh.optString("id") == webhookId && wh.optBoolean("enabled", true)) {
+                    config = wh
+                    break
+                }
+            }
+            if (config == null) { log("warn", "Webhook $webhookId not found or disabled"); return }
+
+            val url = config.optString("url", "")
+            if (url.isEmpty()) { log("warn", "Webhook $webhookId has no URL"); return }
+
+            val method = config.optString("method", "POST")
+            val headersJson = config.optJSONObject("headers") ?: JSONObject()
+            val bodyTemplate = config.optString("bodyTemplate", "")
+
+            val appName = appName(pkg)
+            val now = System.currentTimeMillis()
+
+            fun substitute(template: String): String {
+                return template
+                    .replace("{app_name}", appName)
+                    .replace("{package}", pkg)
+                    .replace("{title}", title)
+                    .replace("{text}", text)
+                    .replace("{timestamp}", now.toString())
+            }
+
+            val body = substitute(bodyTemplate)
+
+            val conn = URL(url).openConnection() as HttpURLConnection
+            conn.requestMethod = method
+            conn.connectTimeout = 15000
+            conn.readTimeout = 15000
+            conn.doOutput = method != "GET"
+            conn.setRequestProperty("Content-Type", "application/json")
+            for (key in headersJson.keys()) {
+                conn.setRequestProperty(key, substitute(headersJson.getString(key)))
+            }
+            if (method != "GET") {
+                conn.outputStream.use { os ->
+                    OutputStreamWriter(os).use { it.write(body) }
+                }
+            }
+            val code = conn.responseCode
+            log("info", "Webhook $webhookId sent to $url — HTTP $code")
+        } catch (e: Exception) {
+            log("warn", "Webhook $webhookId failed: ${e.javaClass.simpleName}: ${e.message}")
         }
     }
 
