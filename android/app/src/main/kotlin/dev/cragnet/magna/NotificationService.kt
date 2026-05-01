@@ -13,9 +13,11 @@ import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.Icon
+import android.media.AudioManager
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
+import android.os.PowerManager
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
 import android.util.Base64
@@ -675,7 +677,24 @@ class NotificationService : NotificationListenerService() {
 
     // ── Rule Engine ──────────────────────────────────────────────────────────
 
-    private fun evaluateRules(sbn: StatusBarNotification, pkg: String, title: String, text: String, conversationId: String?): Boolean {
+    private fun extractSenderNames(extras: android.os.Bundle?): List<String> {
+        if (extras == null) return emptyList()
+        val names = mutableListOf<String>()
+        extras.getCharSequence(Notification.EXTRA_TITLE)?.toString()?.trim()?.takeIf { it.isNotEmpty() }?.let { names.add(it) }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            try {
+                @Suppress("DEPRECATION")
+                val msgs = extras.getParcelableArray(Notification.EXTRA_MESSAGES)
+                msgs?.forEach { m ->
+                    val bundle = m as? android.os.Bundle
+                    bundle?.getCharSequence("sender")?.toString()?.trim()?.takeIf { it.isNotEmpty() }?.let { names.add(it) }
+                }
+            } catch (_: Exception) { }
+        }
+        return names.distinct()
+    }
+
+    private fun evaluateRules(sbn: StatusBarNotification, pkg: String, title: String, text: String, conversationId: String?, extras: android.os.Bundle?): Boolean {
         try {
             val raw = spStr("magna_rules", "[]")
             val arr = JSONArray(raw)
@@ -694,7 +713,7 @@ class NotificationService : NotificationListenerService() {
                 var allMatch = true
                 for (j in 0 until conditions.length()) {
                     val cond = conditions.getJSONObject(j)
-                    if (!evaluateCondition(cond, pkg, title, text, conversationId, now)) {
+                    if (!evaluateCondition(cond, pkg, title, text, conversationId, now, extras)) {
                         allMatch = false
                         break
                     }
@@ -723,7 +742,7 @@ class NotificationService : NotificationListenerService() {
 
     private enum class ActionResult { DISMISSED, SUMMARIZE, PROCESSED }
 
-    private fun evaluateCondition(cond: JSONObject, pkg: String, title: String, text: String, conversationId: String?, now: Long): Boolean {
+    private fun evaluateCondition(cond: JSONObject, pkg: String, title: String, text: String, conversationId: String?, now: Long, extras: android.os.Bundle?): Boolean {
         val type = cond.optString("type", "")
         return try {
             val params = cond.optJSONObject("params") ?: JSONObject()
@@ -765,6 +784,29 @@ class NotificationService : NotificationListenerService() {
                 "otpDetected" -> {
                     val otpRegex = Regex("\\b\\d{4,8}\\b")
                     otpRegex.containsMatchIn(text)
+                }
+                "sender" -> {
+                    val senders = params.optJSONArray("senders") ?: return false
+                    val names = extractSenderNames(extras)
+                    val targets = (0 until senders.length()).map { senders.getString(it).lowercase() }
+                    names.any { it.lowercase() in targets }
+                }
+                "screenState" -> {
+                    val state = params.optString("state", "on")
+                    val pm = getSystemService(Context.POWER_SERVICE) as PowerManager
+                    val interactive = pm.isInteractive
+                    if (state == "on") interactive else !interactive
+                }
+                "ringerMode" -> {
+                    val mode = params.optString("mode", "normal")
+                    val am = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+                    val current = am.ringerMode
+                    when (mode) {
+                        "silent" -> current == AudioManager.RINGER_MODE_SILENT
+                        "vibrate" -> current == AudioManager.RINGER_MODE_VIBRATE
+                        "normal" -> current == AudioManager.RINGER_MODE_NORMAL
+                        else -> false
+                    }
                 }
                 else -> false
             }
@@ -894,7 +936,7 @@ class NotificationService : NotificationListenerService() {
         val actions = sbn.notification.actions?.toList() ?: emptyList()
 
         // ── Rule Engine injection ────────────────────────────────────────────────
-        val ruleConsumed = evaluateRules(sbn, pkg, title, text, conversationId)
+        val ruleConsumed = evaluateRules(sbn, pkg, title, text, conversationId, extras)
         if (ruleConsumed) {
             // Rule handled it (dismissed or added to glance without summarize)
             // Still record stats for visibility

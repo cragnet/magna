@@ -7,6 +7,7 @@ enum ConditionType {
   ringerMode,
   otpDetected,
   aiImportance,
+  sender,
 }
 
 class Condition {
