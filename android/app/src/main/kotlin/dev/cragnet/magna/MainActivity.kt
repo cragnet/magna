@@ -1,4 +1,4 @@
-package xyz.moyelauncher.magna
+package dev.cragnet.magna
 
 import android.app.AppOpsManager
 import android.app.NotificationManager
@@ -21,7 +21,7 @@ import kotlinx.coroutines.runBlocking
 import java.io.ByteArrayOutputStream
 
 class MainActivity : FlutterActivity() {
-    private val CHANNEL = "xyz.moyelauncher.magna/permissions"
+    private val CHANNEL = "dev.cragnet.magna/permissions"
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)

@@ -247,7 +247,7 @@ class _AboutScreenState extends State<AboutScreen> {
   }
 
   Future<void> _sendTestNotifications(String testType, int count) async {
-    const platform = MethodChannel('xyz.moyelauncher.magna/permissions');
+    const platform = MethodChannel('dev.cragnet.magna/permissions');
     try {
       await platform.invokeMethod('sendTestNotification', {
         'count': count,

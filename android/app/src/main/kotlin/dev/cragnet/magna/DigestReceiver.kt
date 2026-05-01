@@ -1,4 +1,4 @@
-package xyz.moyelauncher.magna
+package dev.cragnet.magna
 
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -7,7 +7,7 @@ import android.util.Log
 
 class DigestReceiver : BroadcastReceiver() {
     companion object {
-        const val ACTION_DIGEST = "xyz.moyelauncher.magna.ACTION_DIGEST"
+        const val ACTION_DIGEST = "dev.cragnet.magna.ACTION_DIGEST"
     }
 
     override fun onReceive(context: Context, intent: Intent) {

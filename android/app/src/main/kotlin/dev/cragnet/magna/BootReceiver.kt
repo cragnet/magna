@@ -1,4 +1,4 @@
-package xyz.moyelauncher.magna
+package dev.cragnet.magna
 
 import android.content.BroadcastReceiver
 import android.content.Context
