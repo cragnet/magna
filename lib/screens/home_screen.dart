@@ -193,6 +193,42 @@ class HomeScreen extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        _Label('Privacy'),
+        _Card(
+          child: SwitchListTile(
+            title: const Text('Biometric lock', style: TextStyle(fontWeight: FontWeight.w500)),
+            subtitle: Text(
+              settings.biometricEnabled
+                  ? 'App requires authentication after ${settings.biometricTimeoutMinutes} min'
+                  : 'App is unlocked',
+              style: const TextStyle(color: Colors.white38, fontSize: 13),
+            ),
+            value: settings.biometricEnabled,
+            onChanged: settings.setBiometricEnabled,
+          ),
+        ),
+        if (settings.biometricEnabled)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Row(
+              children: [
+                const Text('Timeout:', style: TextStyle(color: Colors.white54)),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Slider(
+                    value: settings.biometricTimeoutMinutes.toDouble(),
+                    min: 1,
+                    max: 30,
+                    divisions: 29,
+                    label: '${settings.biometricTimeoutMinutes} min',
+                    onChanged: (v) => settings.setBiometricTimeout(v.round()),
+                    activeColor: const Color(0xFF7C4DFF),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        const SizedBox(height: 24),
         _Label('Appearance'),
         _Card(
           child: Column(

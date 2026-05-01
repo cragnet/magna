@@ -6,6 +6,7 @@ import 'providers/rules_provider.dart';
 import 'providers/webhooks_provider.dart';
 import 'screens/setup_screen.dart';
 import 'screens/main_shell.dart';
+import 'widgets/biometric_lock.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,7 +24,7 @@ void main() async {
         ChangeNotifierProvider.value(value: webhooks),
         ChangeNotifierProvider(create: (_) => StatsProvider()),
       ],
-      child: const MagnaApp(),
+      child: const BiometricLock(child: MagnaApp()),
     ),
   );
 }

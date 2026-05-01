@@ -13,6 +13,8 @@ class SettingsProvider extends ChangeNotifier {
   bool setupComplete = false;
   bool serviceEnabled = true;
   bool glanceEnabled = false;
+  bool biometricEnabled = false;
+  int biometricTimeoutMinutes = 5;
 
   String aiProvider = 'ollama';
   String backupProvider1 = '';
@@ -79,6 +81,8 @@ Be brief but informative.''';
     setupComplete = _prefs.getBool('setup_complete') ?? false;
     serviceEnabled = _prefs.getBool('service_enabled') ?? true;
     glanceEnabled = _prefs.getBool('glance_enabled') ?? false;
+    biometricEnabled = _prefs.getBool('biometric_enabled') ?? false;
+    biometricTimeoutMinutes = _prefs.getInt('biometric_timeout_minutes') ?? 5;
     aiProvider = _prefs.getString('ai_provider') ?? 'ollama';
     backupProvider1 = _prefs.getString('backup_provider_1') ?? '';
     backupProvider2 = _prefs.getString('backup_provider_2') ?? '';
@@ -397,6 +401,18 @@ Be brief but informative.''';
   Future<void> setGlanceEnabled(bool v) async {
     glanceEnabled = v;
     await _prefs.setBool('glance_enabled', v);
+    notifyListeners();
+  }
+
+  Future<void> setBiometricEnabled(bool v) async {
+    biometricEnabled = v;
+    await _prefs.setBool('biometric_enabled', v);
+    notifyListeners();
+  }
+
+  Future<void> setBiometricTimeout(int minutes) async {
+    biometricTimeoutMinutes = minutes;
+    await _prefs.setInt('biometric_timeout_minutes', minutes);
     notifyListeners();
   }
 
