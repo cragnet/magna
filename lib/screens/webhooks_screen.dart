@@ -280,7 +280,7 @@ class _WebhookEditorSheetState extends State<_WebhookEditorSheet> {
     final url = _urlCtrl.text.trim();
     if (name.isEmpty || url.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Name and URL are required')), backgroundColor: Colors.redAccent,
+        const SnackBar(content: Text('Name and URL are required'), backgroundColor: Colors.redAccent),
       );
       return;
     }

@@ -724,8 +724,8 @@ class NotificationService : NotificationListenerService() {
     private enum class ActionResult { DISMISSED, SUMMARIZE, PROCESSED }
 
     private fun evaluateCondition(cond: JSONObject, pkg: String, title: String, text: String, conversationId: String?, now: Long): Boolean {
+        val type = cond.optString("type", "")
         return try {
-            val type = cond.optString("type", "")
             val params = cond.optJSONObject("params") ?: JSONObject()
             when (type) {
                 "app" -> {
@@ -812,13 +812,9 @@ class NotificationService : NotificationListenerService() {
                     ActionResult.PROCESSED
                 }
                 "ttsReadout" -> {
-                    val tts = android.speech.tts.TextToSpeech(applicationContext) { status ->
-                        if (status == android.speech.tts.TextToSpeech.SUCCESS) {
-                            android.speech.tts.TextToSpeech(applicationContext).speak(
-                                "$title. $text", android.speech.tts.TextToSpeech.QUEUE_FLUSH, null, null
-                            )
-                        }
-                    }
+                    val utteranceId = "magna_tts_${System.currentTimeMillis()}"
+                    val tts = android.speech.tts.TextToSpeech(applicationContext, null)
+                    tts.speak("$title. $text", android.speech.tts.TextToSpeech.QUEUE_FLUSH, null, utteranceId)
                     log("info", "Action: TTS readout for $pkg")
                     ActionResult.PROCESSED
                 }

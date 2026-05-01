@@ -24,7 +24,7 @@ class _RuleEditorScreenState extends State<RuleEditorScreen> {
   late AiTier _aiTier;
   late bool _enabled;
   final List<Condition> _conditions = [];
-  final List<Action> _actions = [];
+  final List<RuleAction> _actions = [];
 
   final List<Map<String, String>> _installedApps = [];
 
@@ -113,7 +113,7 @@ class _RuleEditorScreenState extends State<RuleEditorScreen> {
               onDelete: () => setState(() => _actions.removeAt(e.key)),
             )),
             const SizedBox(height: 8),
-            _AddButton('Add action', () => _addAction()),
+            _AddButton('Add action', () => _addRuleAction()),
             const SizedBox(height: 40),
           ],
         ),
@@ -191,7 +191,7 @@ class _RuleEditorScreenState extends State<RuleEditorScreen> {
     );
   }
 
-  void _addAction() {
+  void _addRuleAction() {
     showModalBottomSheet(
       context: context,
       builder: (_) => SafeArea(
@@ -204,7 +204,7 @@ class _RuleEditorScreenState extends State<RuleEditorScreen> {
               title: const Text('Add to Glance'),
               onTap: () {
                 Navigator.pop(context);
-                setState(() => _actions.add(Action(type: ActionType.addToGlance, params: {})));
+                setState(() => _actions.add(RuleAction(type: ActionType.addToGlance, params: {})));
               },
             ),
             ListTile(
@@ -212,7 +212,7 @@ class _RuleEditorScreenState extends State<RuleEditorScreen> {
               title: const Text('Dismiss'),
               onTap: () {
                 Navigator.pop(context);
-                setState(() => _actions.add(Action(type: ActionType.dismiss, params: {})));
+                setState(() => _actions.add(RuleAction(type: ActionType.dismiss, params: {})));
               },
             ),
             ListTile(
@@ -220,7 +220,7 @@ class _RuleEditorScreenState extends State<RuleEditorScreen> {
               title: const Text('Summarize'),
               onTap: () {
                 Navigator.pop(context);
-                setState(() => _actions.add(Action(type: ActionType.summarize, params: {})));
+                setState(() => _actions.add(RuleAction(type: ActionType.summarize, params: {})));
               },
             ),
           ],
@@ -232,7 +232,7 @@ class _RuleEditorScreenState extends State<RuleEditorScreen> {
   void _save() {
     if (_conditions.isEmpty || _actions.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('A rule needs at least one condition and one action')), backgroundColor: Colors.redAccent,
+        const SnackBar(content: Text('A rule needs at least one condition and one action'), backgroundColor: Colors.redAccent),
       );
       return;
     }
@@ -384,8 +384,8 @@ class _ConditionTile extends StatelessWidget {
 
 class _ActionTile extends StatelessWidget {
   final int index;
-  final Action action;
-  final ValueChanged<Action> onChanged;
+  final RuleAction action;
+  final ValueChanged<RuleAction> onChanged;
   final VoidCallback onDelete;
 
   const _ActionTile({required this.index, required this.action, required this.onChanged, required this.onDelete});

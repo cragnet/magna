@@ -1,0 +1,1 @@
+ /home/ccopscmc/magna/.dart_tool/flutter_build/b687dd4daa82f2e252a15b2728d8a304/native_assets.json: 

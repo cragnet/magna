@@ -1,0 +1,1 @@
+ /home/ccopscmc/magna/.dart_tool/flutter_build/b687dd4daa82f2e252a15b2728d8a304/dart_build_result.json:  /home/ccopscmc/flutter/bin/cache/dart-sdk/version /home/ccopscmc/magna/.dart_tool/package_config.json /home/ccopscmc/magna/pubspec.yaml

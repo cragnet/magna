@@ -9,7 +9,7 @@ class Rule {
   final bool enabled;
   final int priority;
   final List<Condition> conditions;
-  final List<Action> actions;
+  final List<RuleAction> actions;
   final AiTier aiTier;
 
   Rule({
@@ -41,7 +41,7 @@ class Rule {
         .map((c) => Condition.fromJson(c as Map<String, dynamic>))
         .toList(),
     actions: (json['actions'] as List? ?? [])
-        .map((a) => Action.fromJson(a as Map<String, dynamic>))
+        .map((a) => RuleAction.fromJson(a as Map<String, dynamic>))
         .toList(),
     aiTier: AiTier.values.byName(json['aiTier'] as String? ?? 'auto'),
   );
@@ -52,7 +52,7 @@ class Rule {
     bool? enabled,
     int? priority,
     List<Condition>? conditions,
-    List<Action>? actions,
+    List<RuleAction>? actions,
     AiTier? aiTier,
   }) => Rule(
     id: id ?? this.id,

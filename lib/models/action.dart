@@ -10,18 +10,18 @@ enum ActionType {
   aiAutoReply,
 }
 
-class Action {
+class RuleAction {
   final ActionType type;
   final Map<String, dynamic> params;
 
-  Action({required this.type, required this.params});
+  RuleAction({required this.type, required this.params});
 
   Map<String, dynamic> toJson() => {
     'type': type.name,
     'params': params,
   };
 
-  factory Action.fromJson(Map<String, dynamic> json) => Action(
+  factory RuleAction.fromJson(Map<String, dynamic> json) => RuleAction(
     type: ActionType.values.byName(json['type'] as String),
     params: Map<String, dynamic>.from(json['params'] as Map? ?? {}),
   );
