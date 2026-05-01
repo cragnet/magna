@@ -1,4 +1,4 @@
-package com.craigcarroll.notifyai
+package xyz.moyelauncher.magna
 
 import android.content.BroadcastReceiver
 import android.content.Context

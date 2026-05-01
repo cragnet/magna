@@ -64,7 +64,7 @@ class _ImportExportScreenState extends State<ImportExportScreen> {
 
       await Share.shareXFiles(
         [XFile(file.path, mimeType: 'application/json')],
-        subject: 'Notify AI Settings Export',
+        subject: 'Magna Settings Export',
       );
 
       setState(() {
@@ -206,16 +206,16 @@ class _ImportExportScreenState extends State<ImportExportScreen> {
                 width: double.infinity,
                 padding: const EdgeInsets.all(14),
                 decoration: BoxDecoration(
-                  color: _statusSuccess ? const Color(0xFF2A3A2E) : const Color(0xFF3A1A1A),
+                  color: _statusSuccess ? const Color(0xFF3A2E5A) : const Color(0xFF3A1A1A),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Row(
                   children: [
                     Icon(_statusSuccess ? Icons.check_circle : Icons.error_outline,
-                        color: _statusSuccess ? const Color(0xFF6B9E78) : Colors.redAccent, size: 18),
+                        color: _statusSuccess ? const Color(0xFF7C4DFF) : Colors.redAccent, size: 18),
                     const SizedBox(width: 10),
                     Expanded(child: Text(_statusMessage!,
-                        style: TextStyle(color: _statusSuccess ? const Color(0xFF6B9E78) : Colors.redAccent, fontSize: 13))),
+                        style: TextStyle(color: _statusSuccess ? const Color(0xFF7C4DFF) : Colors.redAccent, fontSize: 13))),
                   ],
                 ),
               ),
@@ -283,7 +283,7 @@ class _Label extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Padding(
     padding: const EdgeInsets.fromLTRB(4, 8, 0, 8),
-    child: Text(text, style: const TextStyle(color: Color(0xFF6B9E78), fontSize: 13, fontWeight: FontWeight.w600, letterSpacing: 0.5)),
+    child: Text(text, style: const TextStyle(color: Color(0xFF7C4DFF), fontSize: 13, fontWeight: FontWeight.w600, letterSpacing: 0.5)),
   );
 }
 

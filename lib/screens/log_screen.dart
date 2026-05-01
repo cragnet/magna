@@ -112,7 +112,7 @@ class _LogScreenState extends State<LogScreen> with WidgetsBindingObserver {
         ],
       ),
       body: RefreshIndicator(
-        color: const Color(0xFF6B9E78),
+        color: const Color(0xFF7C4DFF),
         onRefresh: () => _load(showSpinner: true),
         child: Column(
           children: [
@@ -129,7 +129,7 @@ class _LogScreenState extends State<LogScreen> with WidgetsBindingObserver {
                       color: Colors.white54, onTap: (v) => setState(() => _filter = v)),
                   const SizedBox(width: 8),
                   _Chip(label: 'Success', value: 'success', current: _filter,
-                      color: const Color(0xFF6B9E78), onTap: (v) => setState(() => _filter = v)),
+                      color: const Color(0xFF7C4DFF), onTap: (v) => setState(() => _filter = v)),
                   const SizedBox(width: 8),
                   _Chip(label: 'Warning', value: 'warn', current: _filter,
                       color: const Color(0xFFE8A838), onTap: (v) => setState(() => _filter = v)),
@@ -153,17 +153,17 @@ class _LogScreenState extends State<LogScreen> with WidgetsBindingObserver {
                       Clipboard.setData(ClipboardData(text: text));
                       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                           content: Text('Log copied to clipboard'),
-                          backgroundColor: Color(0xFF4A7A56)));
+                          backgroundColor: Color(0xFF5A3DBF)));
                     },
                     child: const Text('Copy all',
-                        style: TextStyle(color: Color(0xFF6B9E78), fontSize: 12)),
+                        style: TextStyle(color: Color(0xFF7C4DFF), fontSize: 12)),
                   ),
                 ],
               ),
             ),
             Expanded(
               child: _loading
-                  ? const Center(child: CircularProgressIndicator(color: Color(0xFF6B9E78)))
+                  ? const Center(child: CircularProgressIndicator(color: Color(0xFF7C4DFF)))
                   : _filtered.isEmpty
                       ? LayoutBuilder(
                           builder: (context, constraints) => SingleChildScrollView(
@@ -210,7 +210,7 @@ class _LogRow extends StatelessWidget {
 
   Color get _color {
     switch (entry.level) {
-      case 'success': return const Color(0xFF6B9E78);
+      case 'success': return const Color(0xFF7C4DFF);
       case 'warn': return const Color(0xFFE8A838);
       case 'error': return Colors.redAccent;
       default: return Colors.white54;

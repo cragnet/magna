@@ -53,7 +53,7 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: notify-ai-release
+          name: magna-release
           path: build/app/outputs/flutter-apk/*.apk
           retention-days: 30
           if-no-files-found: error

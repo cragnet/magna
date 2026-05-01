@@ -1,4 +1,4 @@
-package com.craigcarroll.notifyai
+package xyz.moyelauncher.magna
 
 import android.app.AppOpsManager
 import android.app.NotificationManager
@@ -21,7 +21,7 @@ import kotlinx.coroutines.runBlocking
 import java.io.ByteArrayOutputStream
 
 class MainActivity : FlutterActivity() {
-    private val CHANNEL = "com.craigcarroll.notifyai/permissions"
+    private val CHANNEL = "xyz.moyelauncher.magna/permissions"
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
@@ -90,6 +90,18 @@ class MainActivity : FlutterActivity() {
                     val testType = call.argument<String>("testType") ?: "single" // single, multi_conversation, duplicates
                     sendTestNotifications(count, appPackage, appName, testType)
                     result.success(null)
+                }
+
+                "clearGlance" -> {
+                    val service = NotificationService.getInstance()
+                    service?.clearGlance()
+                    result.success(true)
+                }
+
+                "getGlanceEntries" -> {
+                    val service = NotificationService.getInstance()
+                    val entries = service?.getGlanceEntriesJson()
+                    result.success(entries ?: "[]")
                 }
 
                 else -> result.notImplemented()

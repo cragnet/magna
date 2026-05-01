@@ -1,4 +1,4 @@
-package com.craigcarroll.notifyai
+package xyz.moyelauncher.magna
 
 import android.app.NotificationManager
 import android.content.BroadcastReceiver
@@ -14,6 +14,12 @@ import android.util.Log
  */
 class SummaryActionReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
+        // Handle Glance clear action
+        if (intent.getBooleanExtra("glance_clear", false)) {
+            NotificationService.getInstance()?.clearGlance()
+            return
+        }
+
         val pkg = intent.getStringExtra("pkg") ?: return
         val notifId = intent.getIntExtra("notifId", 0)
         val actionKey = intent.getStringExtra("actionKey") ?: return

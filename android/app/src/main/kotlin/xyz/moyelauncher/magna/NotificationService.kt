@@ -1,4 +1,4 @@
-package com.craigcarroll.notifyai
+package xyz.moyelauncher.magna
 
 import android.app.Notification
 import android.app.NotificationChannel
@@ -222,6 +222,8 @@ class NotificationService : NotificationListenerService() {
     private val debounceShortDelay = mutableMapOf<String, Boolean>()
     private val DEBOUNCE_MS = 3000L
     private val STATUS_NOTIF_ID = "notifyai_status".hashCode()
+    private val GLANCE_NOTIF_ID = "magna_glance".hashCode()
+    private val MAX_GLANCE_ENTRIES = 30
 
     // Cooldown to prevent rapid-fire summaries when threshold=1.
     // After posting a summary for a package, block re-summarising the same
@@ -671,6 +673,135 @@ class NotificationService : NotificationListenerService() {
         }
     }
 
+    // ── Rule Engine ──────────────────────────────────────────────────────────
+
+    private fun evaluateRules(sbn: StatusBarNotification, pkg: String, title: String, text: String, conversationId: String?): Boolean {
+        try {
+            val raw = spStr("magna_rules", "[]")
+            val arr = JSONArray(raw)
+            if (arr.length() == 0) return false // no custom rules — fall through to default behaviour
+
+            // Sort by priority descending (highest first)
+            val rules = mutableListOf<JSONObject>()
+            for (i in 0 until arr.length()) rules.add(arr.getJSONObject(i))
+            rules.sortByDescending { it.optInt("priority", 50) }
+
+            val now = System.currentTimeMillis()
+
+            for (rule in rules) {
+                if (!rule.optBoolean("enabled", true)) continue
+                val conditions = rule.optJSONArray("conditions") ?: continue
+                var allMatch = true
+                for (j in 0 until conditions.length()) {
+                    val cond = conditions.getJSONObject(j)
+                    if (!evaluateCondition(cond, pkg, title, text, conversationId, now)) {
+                        allMatch = false
+                        break
+                    }
+                }
+                if (allMatch) {
+                    log("info", "Rule matched: ${rule.optString("name", "unnamed")} (priority=${rule.optInt("priority",50)})")
+                    val actions = rule.optJSONArray("actions") ?: continue
+                    var shouldProceedToBuffer = false
+                    for (j in 0 until actions.length()) {
+                        val action = actions.getJSONObject(j)
+                        val actionResult = executeAction(action, sbn, pkg, title, text, conversationId)
+                        if (actionResult == ActionResult.DISMISSED) return true // stop processing entirely
+                        if (actionResult == ActionResult.SUMMARIZE) shouldProceedToBuffer = true
+                    }
+                    // If this rule had actions and didn't dismiss, and no summarize action, we still consumed it
+                    if (!shouldProceedToBuffer) return true
+                    // If summarize action was present, proceed to existing buffer logic
+                    return false
+                }
+            }
+        } catch (e: Exception) {
+            log("warn", "Rule evaluation error: ${e.message}")
+        }
+        return false // no rule matched — fall through to default behaviour
+    }
+
+    private enum class ActionResult { DISMISSED, SUMMARIZE, PROCESSED }
+
+    private fun evaluateCondition(cond: JSONObject, pkg: String, title: String, text: String, conversationId: String?, now: Long): Boolean {
+        return try {
+            val type = cond.optString("type", "")
+            val params = cond.optJSONObject("params") ?: JSONObject()
+            when (type) {
+                "app" -> {
+                    val apps = params.optJSONArray("apps") ?: return false
+                    val list = (0 until apps.length()).map { apps.getString(it) }
+                    list.contains(pkg)
+                }
+                "keyword" -> {
+                    val keywords = params.optJSONArray("keywords") ?: return false
+                    val combined = "$title $text".lowercase()
+                    (0 until keywords.length()).any { combined.contains(keywords.getString(it).lowercase()) }
+                }
+                "regex" -> {
+                    val pattern = params.optString("pattern", "")
+                    if (pattern.isEmpty()) return false
+                    val combined = "$title $text"
+                    Regex(pattern, RegexOption.IGNORE_CASE).containsMatchIn(combined)
+                }
+                "timeRange" -> {
+                    val start = params.optString("start", "00:00")
+                    val end = params.optString("end", "23:59")
+                    val days = params.optJSONArray("days")
+                    val cal = java.util.Calendar.getInstance()
+                    val hour = cal.get(java.util.Calendar.HOUR_OF_DAY)
+                    val minute = cal.get(java.util.Calendar.MINUTE)
+                    val current = hour * 60 + minute
+                    val sParts = start.split(":").map { it.toInt() }
+                    val eParts = end.split(":").map { it.toInt() }
+                    val sMin = sParts[0] * 60 + sParts[1]
+                    val eMin = eParts[0] * 60 + eParts[1]
+                    val inTime = if (sMin <= eMin) current in sMin..eMin else current >= sMin || current <= eMin
+                    if (days == null) return inTime
+                    val dayOfWeek = (cal.get(java.util.Calendar.DAY_OF_WEEK) + 5) % 7 // Mon=0 .. Sun=6
+                    val allowed = (0 until days.length()).map { days.getInt(it) }
+                    inTime && allowed.contains(dayOfWeek)
+                }
+                "otpDetected" -> {
+                    val otpRegex = Regex("\\b\\d{4,8}\\b")
+                    otpRegex.containsMatchIn(text)
+                }
+                else -> false
+            }
+        } catch (e: Exception) {
+            log("warn", "Condition evaluation error for $type: ${e.message}")
+            false
+        }
+    }
+
+    private fun executeAction(action: JSONObject, sbn: StatusBarNotification, pkg: String, title: String, text: String, conversationId: String?): ActionResult {
+        return try {
+            val type = action.optString("type", "")
+            val params = action.optJSONObject("params") ?: JSONObject()
+            when (type) {
+                "dismiss" -> {
+                    cancelNotification(sbn.key)
+                    log("info", "Action: dismissed notification from $pkg")
+                    ActionResult.DISMISSED
+                }
+                "addToGlance" -> {
+                    val appName = appName(pkg)
+                    appendToGlance(pkg, appName, "$title · $text", 1)
+                    postGlanceNotification()
+                    log("info", "Action: added to Glance for $pkg")
+                    ActionResult.PROCESSED
+                }
+                "summarize" -> {
+                    ActionResult.SUMMARIZE
+                }
+                else -> ActionResult.PROCESSED
+            }
+        } catch (e: Exception) {
+            log("warn", "Action execution error for ${action.optString("type")}: ${e.message}")
+            ActionResult.PROCESSED
+        }
+    }
+
     private fun _handleNotificationInternal(sbn: StatusBarNotification) {
         val pkg = sbn.packageName
         if (pkg == applicationContext.packageName) return
@@ -713,6 +844,16 @@ class NotificationService : NotificationListenerService() {
         val name = appName(pkg)
         val image = extractImage(sbn.notification)
         val actions = sbn.notification.actions?.toList() ?: emptyList()
+
+        // ── Rule Engine injection ────────────────────────────────────────────────
+        val ruleConsumed = evaluateRules(sbn, pkg, title, text, conversationId)
+        if (ruleConsumed) {
+            // Rule handled it (dismissed or added to glance without summarize)
+            // Still record stats for visibility
+            saveHistory(pkg, name, title, text, image != null)
+            recordStat(pkg, intercepted = true, summarised = false)
+            return
+        }
 
         // Get or create the notification group for this package
         val group = buffer.getOrPut(pkg) { NotificationGroup(packageName = pkg) }
@@ -1790,8 +1931,130 @@ Provide a clear, concise summary."""
             log("info", "No actions attached: retainActions=$retainActions, actionsEmpty=${actions.isEmpty()}")
         }
 
+        // Glance mode: accumulate into persistent summary instead of per-app ping
+        val glanceEnabled = spBool("glance_enabled", false)
+        if (glanceEnabled) {
+            appendToGlance(pkg, name, summary, count)
+            postGlanceNotification()
+            // Do NOT post the per-app summary when Glance is active
+            return
+        }
+
         nm.notify(finalNotificationId, builder.build())
         log("success", "Summary notification posted for $name (id=$finalNotificationId)")
+    }
+
+    // ── The Glance ───────────────────────────────────────────────────────────
+
+    private fun appendToGlance(pkg: String, appName: String, summary: String, count: Int) {
+        try {
+            val sp = sp()
+            val raw = sp.getString("magna_glance_entries", "[]") ?: "[]"
+            val arr = JSONArray(raw)
+            val entry = JSONObject().apply {
+                put("id", "${pkg}_${System.currentTimeMillis()}")
+                put("packageName", pkg)
+                put("appName", appName)
+                put("title", summary)
+                put("text", "")
+                put("timestamp", System.currentTimeMillis())
+            }
+            arr.put(entry)
+            // Evict oldest if over limit
+            while (arr.length() > MAX_GLANCE_ENTRIES) {
+                val trimmed = JSONArray()
+                for (i in 1 until arr.length()) trimmed.put(arr.get(i))
+                // Replace arr reference
+                for (i in 0 until trimmed.length()) arr.put(i, trimmed.get(i))
+                while (arr.length() > trimmed.length()) arr.remove(arr.length() - 1)
+            }
+            sp.edit().putString("magna_glance_entries", arr.toString()).apply()
+            log("info", "Glance appended: $appName ($count) · ${summary.take(60)}")
+        } catch (e: Exception) {
+            log("warn", "Glance append failed: ${e.message}")
+        }
+    }
+
+    private fun postGlanceNotification() {
+        try {
+            val sp = sp()
+            val raw = sp.getString("magna_glance_entries", "[]") ?: "[]"
+            val arr = JSONArray(raw)
+            if (arr.length() == 0) {
+                cancelGlanceNotification()
+                return
+            }
+
+            val nm = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            val channelId = "magna_glance_channel"
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                nm.createNotificationChannel(NotificationChannel(channelId,
+                    "Magna Glance", NotificationManager.IMPORTANCE_HIGH).apply {
+                    enableVibration(true)
+                })
+            }
+
+            val builder = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+                Notification.Builder(this, channelId)
+            else @Suppress("DEPRECATION") Notification.Builder(this)
+
+            val inbox = Notification.InboxStyle()
+            val count = arr.length()
+            for (i in (count - 1).downTo(maxOf(0, count - 7))) {
+                val entry = arr.getJSONObject(i)
+                val app = entry.optString("appName", "App")
+                val text = entry.optString("title", "").take(80)
+                inbox.addLine("$app · $text")
+            }
+            inbox.setSummaryText("$count notification${if (count > 1) "s" else ""}")
+            inbox.setBigContentTitle("Magna · Glance")
+
+            // Clear intent (swipe away clears buffer)
+            val clearIntent = Intent(this, SummaryActionReceiver::class.java).apply {
+                putExtra("glance_clear", true)
+            }
+            val clearPi = PendingIntent.getBroadcast(
+                this, "glance_clear".hashCode(), clearIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            )
+
+            builder.setContentTitle("Magna · Glance")
+                .setContentText("$count notification${if (count > 1) "s" else ""} waiting")
+                .setStyle(inbox)
+                .setSmallIcon(android.R.drawable.ic_dialog_info)
+                .setAutoCancel(false)
+                .setOngoing(false)
+                .setDeleteIntent(clearPi)
+                .addAction(android.R.drawable.ic_menu_close_clear_cancel, "Clear", clearPi)
+
+            nm.notify(GLANCE_NOTIF_ID, builder.build())
+            log("info", "Glance notification updated with $count entries")
+        } catch (e: Exception) {
+            log("warn", "Glance notification failed: ${e.message}")
+        }
+    }
+
+    fun clearGlance() {
+        try {
+            sp().edit().putString("magna_glance_entries", "[]").apply()
+            cancelGlanceNotification()
+            log("info", "Glance cleared")
+        } catch (e: Exception) {
+            log("warn", "Glance clear failed: ${e.message}")
+        }
+    }
+
+    private fun cancelGlanceNotification() {
+        val nm = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        nm.cancel(GLANCE_NOTIF_ID)
+    }
+
+    fun getGlanceEntriesJson(): String {
+        return try {
+            sp().getString("magna_glance_entries", "[]") ?: "[]"
+        } catch (e: Exception) {
+            "[]"
+        }
     }
 
     private fun postStatusNotification(title: String, text: String) {

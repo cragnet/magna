@@ -107,7 +107,7 @@ class _PromptSettingsScreenState extends State<PromptSettingsScreen> {
                       child: Text(
                         isDefault ? 'Using default prompt' : 'Custom prompt active',
                         style: TextStyle(
-                          color: isDefault ? Colors.white38 : const Color(0xFF6B9E78),
+                          color: isDefault ? Colors.white38 : const Color(0xFF7C4DFF),
                           fontSize: 12,
                         ),
                       ),
@@ -129,7 +129,7 @@ class _PromptSettingsScreenState extends State<PromptSettingsScreen> {
                         : const Icon(Icons.save_outlined, size: 18),
                     label: Text(_saved ? 'Saved' : 'Save prompt'),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: _saved ? const Color(0xFF6B9E78) : null,
+                      backgroundColor: _saved ? const Color(0xFF7C4DFF) : null,
                     ),
                   ),
                 ),
@@ -167,19 +167,19 @@ class _PromptSettingsScreenState extends State<PromptSettingsScreen> {
                   decoration: BoxDecoration(
                     color: const Color(0xFF2A2A2A),
                     borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: const Color(0xFF6B9E78).withOpacity(0.3)),
+                    border: Border.all(color: const Color(0xFF7C4DFF).withOpacity(0.3)),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
                         children: [
-                          Icon(Icons.info_outline, color: const Color(0xFF6B9E78), size: 16),
+                          Icon(Icons.info_outline, color: const Color(0xFF7C4DFF), size: 16),
                           const SizedBox(width: 8),
                           Text(
                             'Using with Summary Length',
                             style: TextStyle(
-                              color: const Color(0xFF6B9E78),
+                              color: const Color(0xFF7C4DFF),
                               fontSize: 12,
                               fontWeight: FontWeight.w600,
                             ),
@@ -217,7 +217,7 @@ class _Label extends StatelessWidget {
         child: Text(
           text,
           style: const TextStyle(
-            color: Color(0xFF6B9E78),
+            color: Color(0xFF7C4DFF),
             fontSize: 13,
             fontWeight: FontWeight.w600,
             letterSpacing: 0.5,
@@ -239,13 +239,13 @@ class _VariableItem extends StatelessWidget {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
           decoration: BoxDecoration(
-            color: const Color(0xFF2A3A2E),
+            color: const Color(0xFF3A2E5A),
             borderRadius: BorderRadius.circular(4),
           ),
           child: Text(
             name,
             style: const TextStyle(
-              color: Color(0xFF6B9E78),
+              color: Color(0xFF7C4DFF),
               fontSize: 12,
               fontFamily: 'monospace',
               fontFamilyFallback: ['Courier'],

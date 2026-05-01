@@ -1,6 +1,6 @@
-# Notify AI
+# Magna
 
-AI-powered notification summariser for Android. Capture notifications from selected apps, batch them, and get AI-generated summaries.
+AI-powered notification manager for Android. Summarize, automate & declutter your alerts.
 
 ## Features
 

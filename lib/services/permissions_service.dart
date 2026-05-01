@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class PermissionsService {
-  static const _ch = MethodChannel('com.craigcarroll.notifyai/permissions');
+  static const _ch = MethodChannel('xyz.moyelauncher.magna/permissions');
 
   static Future<bool> isNotificationListenerEnabled() async {
     try { return await _ch.invokeMethod('isNotificationListenerEnabled') ?? false; } catch (_) { return false; }
@@ -49,6 +49,14 @@ class PermissionsService {
 
   static Future<bool> restartNotificationListener() async {
     try { return await _ch.invokeMethod('restartNotificationListener') ?? false; } catch (_) { return false; }
+  }
+
+  static Future<bool> clearGlance() async {
+    try { return await _ch.invokeMethod('clearGlance') ?? false; } catch (_) { return false; }
+  }
+
+  static Future<String> getGlanceEntries() async {
+    try { return await _ch.invokeMethod('getGlanceEntries') ?? '[]'; } catch (_) { return '[]'; }
   }
 
   // POST_NOTIFICATIONS permission (Android 13+)

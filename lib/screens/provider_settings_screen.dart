@@ -110,7 +110,7 @@ class _ProviderSettingsScreenState extends State<ProviderSettingsScreen> {
               return Column(children: [
                 RadioListTile<String>(
                   value: p.id, groupValue: _selectedProvider,
-                  activeColor: const Color(0xFF6B9E78),
+                  activeColor: const Color(0xFF7C4DFF),
                   title: Text(p.displayName),
                   subtitle: _subtitle(p),
                   onChanged: (v) { if (v != null) _switch(v); },
@@ -254,7 +254,7 @@ class _ProviderSettingsScreenState extends State<ProviderSettingsScreen> {
                                   await file.writeAsString(key);
                                   await Share.shareXFiles(
                                     [XFile(file.path, mimeType: 'text/plain')],
-                                    subject: 'Notify AI — ${_selectedProvider} API key',
+                                    subject: 'Magna — ${_selectedProvider} API key',
                                   );
                                 } catch (e) {
                                   if (context.mounted) {
@@ -281,9 +281,9 @@ class _ProviderSettingsScreenState extends State<ProviderSettingsScreen> {
                 ] else if (cfg?.id == 'gemini_nano') ...[
                   Container(
                     padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(color: const Color(0xFF2A3A2E), borderRadius: BorderRadius.circular(10)),
+                    decoration: BoxDecoration(color: const Color(0xFF3A2E5A), borderRadius: BorderRadius.circular(10)),
                     child: const Row(children: [
-                      Icon(Icons.lock_open, color: Color(0xFF6B9E78), size: 18),
+                      Icon(Icons.lock_open, color: Color(0xFF7C4DFF), size: 18),
                       SizedBox(width: 8),
                       Expanded(child: Text('No API key needed — runs entirely on your device',
                           style: TextStyle(color: Colors.white70, fontSize: 13))),
@@ -331,11 +331,11 @@ class _ProviderSettingsScreenState extends State<ProviderSettingsScreen> {
                   ? Container(
                       key: const ValueKey('saved'),
                       padding: const EdgeInsets.symmetric(vertical: 16),
-                      decoration: BoxDecoration(color: const Color(0xFF2A3A2E), borderRadius: BorderRadius.circular(12)),
+                      decoration: BoxDecoration(color: const Color(0xFF3A2E5A), borderRadius: BorderRadius.circular(12)),
                       child: const Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                        Icon(Icons.check_circle, color: Color(0xFF6B9E78), size: 20),
+                        Icon(Icons.check_circle, color: Color(0xFF7C4DFF), size: 20),
                         SizedBox(width: 8),
-                        Text('Configuration saved', style: TextStyle(color: Color(0xFF6B9E78), fontWeight: FontWeight.w600, fontSize: 16)),
+                        Text('Configuration saved', style: TextStyle(color: Color(0xFF7C4DFF), fontWeight: FontWeight.w600, fontSize: 16)),
                       ]))
                   : ElevatedButton(
                       key: const ValueKey('save'),
@@ -374,7 +374,7 @@ class _Label extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Padding(
     padding: const EdgeInsets.fromLTRB(4, 8, 0, 8),
-    child: Text(text, style: const TextStyle(color: Color(0xFF6B9E78), fontSize: 13, fontWeight: FontWeight.w600, letterSpacing: 0.5)),
+    child: Text(text, style: const TextStyle(color: Color(0xFF7C4DFF), fontSize: 13, fontWeight: FontWeight.w600, letterSpacing: 0.5)),
   );
 }
 

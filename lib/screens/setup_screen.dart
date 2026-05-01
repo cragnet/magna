@@ -78,7 +78,7 @@ class _SetupScreenState extends State<SetupScreen> with WidgetsBindingObserver {
 
                   _PermissionRow(
                     title: 'Notification access',
-                    subtitle: 'Required — allows Notify AI to read incoming notifications',
+                    subtitle: 'Required — allows Magna to read incoming notifications',
                     granted: _notificationListener,
                     required: true,
                     onTap: () => PermissionsService.openNotificationListenerSettings(),
@@ -86,7 +86,7 @@ class _SetupScreenState extends State<SetupScreen> with WidgetsBindingObserver {
                   const SizedBox(height: 20),
                   _PermissionRow(
                     title: 'Allow notifications',
-                    subtitle: 'Required — allows Notify AI to post AI summaries',
+                    subtitle: 'Required — allows Magna to post AI summaries',
                     granted: _postNotifications,
                     required: true,
                     onTap: () async {
@@ -131,7 +131,7 @@ class _SetupScreenState extends State<SetupScreen> with WidgetsBindingObserver {
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               color: _canContinue
-                                  ? const Color(0xFF6B9E78)
+                                  ? const Color(0xFF7C4DFF)
                                   : const Color(0xFF2A2A2A),
                             ),
                             child: const Icon(Icons.arrow_forward, color: Colors.white),
@@ -188,7 +188,7 @@ class _PermissionRow extends StatelessWidget {
             child: Icon(
               granted ? Icons.check_circle : Icons.radio_button_unchecked,
               color: granted
-                  ? const Color(0xFF6B9E78)
+                  ? const Color(0xFF7C4DFF)
                   : (required ? Colors.white54 : Colors.white24),
               size: 22,
             ),
@@ -211,12 +211,12 @@ class _PermissionRow extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF6B9E78).withOpacity(0.2),
+                          color: const Color(0xFF7C4DFF).withOpacity(0.2),
                           borderRadius: BorderRadius.circular(4),
                         ),
                         child: const Text('Required',
                             style: TextStyle(
-                                color: Color(0xFF6B9E78),
+                                color: Color(0xFF7C4DFF),
                                 fontSize: 10,
                                 fontWeight: FontWeight.w600)),
                       ),

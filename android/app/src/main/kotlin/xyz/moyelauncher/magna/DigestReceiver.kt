@@ -1,4 +1,4 @@
-package com.craigcarroll.notifyai
+package xyz.moyelauncher.magna
 
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -7,7 +7,7 @@ import android.util.Log
 
 class DigestReceiver : BroadcastReceiver() {
     companion object {
-        const val ACTION_DIGEST = "com.craigcarroll.notifyai.ACTION_DIGEST"
+        const val ACTION_DIGEST = "xyz.moyelauncher.magna.ACTION_DIGEST"
     }
 
     override fun onReceive(context: Context, intent: Intent) {

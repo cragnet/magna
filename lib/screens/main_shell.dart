@@ -100,28 +100,28 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
       ),
       bottomNavigationBar: NavigationBar(
         backgroundColor: const Color(0xFF1A1A1A),
-        indicatorColor: const Color(0xFF2A3A2E),
+        indicatorColor: const Color(0xFF3A2E5A),
         selectedIndex: _index,
         onDestinationSelected: (i) { setState(() => _index = i); _saveIndex(i); },
         destinations: const [
           NavigationDestination(
             icon: Icon(Icons.notifications_outlined),
-            selectedIcon: Icon(Icons.notifications, color: Color(0xFF6B9E78)),
+            selectedIcon: Icon(Icons.notifications, color: Color(0xFF7C4DFF)),
             label: 'History',
           ),
           NavigationDestination(
             icon: Icon(Icons.bar_chart_outlined),
-            selectedIcon: Icon(Icons.bar_chart, color: Color(0xFF6B9E78)),
+            selectedIcon: Icon(Icons.bar_chart, color: Color(0xFF7C4DFF)),
             label: 'Stats',
           ),
           NavigationDestination(
             icon: Icon(Icons.terminal_outlined),
-            selectedIcon: Icon(Icons.terminal, color: Color(0xFF6B9E78)),
+            selectedIcon: Icon(Icons.terminal, color: Color(0xFF7C4DFF)),
             label: 'Log',
           ),
           NavigationDestination(
             icon: Icon(Icons.settings_outlined),
-            selectedIcon: Icon(Icons.settings, color: Color(0xFF6B9E78)),
+            selectedIcon: Icon(Icons.settings, color: Color(0xFF7C4DFF)),
             label: 'Settings',
           ),
         ],

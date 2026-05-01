@@ -60,7 +60,7 @@ class _StatsScreenState extends State<StatsScreen> with WidgetsBindingObserver {
 
     if (stats.loading) {
       return const Scaffold(
-        body: Center(child: CircularProgressIndicator(color: Color(0xFF6B9E78))),
+        body: Center(child: CircularProgressIndicator(color: Color(0xFF7C4DFF))),
       );
     }
 
@@ -84,7 +84,7 @@ class _StatsScreenState extends State<StatsScreen> with WidgetsBindingObserver {
         ],
       ),
       body: RefreshIndicator(
-        color: const Color(0xFF6B9E78),
+        color: const Color(0xFF7C4DFF),
         onRefresh: stats.load,
         child: LayoutBuilder(
           builder: (context, constraints) {
@@ -119,7 +119,7 @@ class _StatsScreenState extends State<StatsScreen> with WidgetsBindingObserver {
                         label: 'Summarised',
                         value: '$totalSummarised',
                         icon: Icons.auto_awesome_outlined,
-                        color: const Color(0xFF6B9E78),
+                        color: const Color(0xFF7C4DFF),
                       )),
                       const SizedBox(width: 12),
                       Expanded(child: _StatCard(
@@ -153,7 +153,7 @@ class _StatsScreenState extends State<StatsScreen> with WidgetsBindingObserver {
                       children: [
                         _LegendDot(color: const Color(0xFF4A90D9), label: 'Intercepted'),
                         const SizedBox(width: 20),
-                        _LegendDot(color: const Color(0xFF6B9E78), label: 'Summarised'), // Note: softWrap handles this
+                        _LegendDot(color: const Color(0xFF7C4DFF), label: 'Summarised'), // Note: softWrap handles this
                       ],
                     ),
                     const SizedBox(height: 20),
@@ -208,7 +208,7 @@ class _StatsScreenState extends State<StatsScreen> with WidgetsBindingObserver {
                                 Expanded(child: Text('Summarised',
                                     textAlign: TextAlign.center,
                                     softWrap: false,
-                                    style: TextStyle(color: Color(0xFF6B9E78),
+                                    style: TextStyle(color: Color(0xFF7C4DFF),
                                         fontSize: 12, fontWeight: FontWeight.w600))),
                               ],
                             ),
@@ -249,7 +249,7 @@ class _StatsScreenState extends State<StatsScreen> with WidgetsBindingObserver {
                                         child: Text('${app.summarised}',
                                             textAlign: TextAlign.center,
                                             style: const TextStyle(
-                                                color: Color(0xFF6B9E78),
+                                                color: Color(0xFF7C4DFF),
                                                 fontWeight: FontWeight.w600)),
                                       ),
                                     ],
@@ -294,7 +294,7 @@ class _StatsScreenState extends State<StatsScreen> with WidgetsBindingObserver {
                         ? 'Intercepted: ${d.intercepted}'
                         : 'Summarised: ${d.summarised}',
                     style: TextStyle(
-                      color: ri == 0 ? const Color(0xFF4A90D9) : const Color(0xFF6B9E78),
+                      color: ri == 0 ? const Color(0xFF4A90D9) : const Color(0xFF7C4DFF),
                       fontSize: 11,
                     ),
                   ),
@@ -350,7 +350,7 @@ class _StatsScreenState extends State<StatsScreen> with WidgetsBindingObserver {
               ),
               BarChartRodData(
                 toY: d.summarised.toDouble(),
-                color: const Color(0xFF6B9E78),
+                color: const Color(0xFF7C4DFF),
                 width: 6,
                 borderRadius: const BorderRadius.vertical(top: Radius.circular(3)),
               ),
@@ -394,7 +394,7 @@ class _PeriodSelector extends StatelessWidget {
                 margin: const EdgeInsets.all(4),
                 padding: const EdgeInsets.symmetric(vertical: 10),
                 decoration: BoxDecoration(
-                  color: selected ? const Color(0xFF4A7A56) : Colors.transparent,
+                  color: selected ? const Color(0xFF5A3DBF) : Colors.transparent,
                   borderRadius: BorderRadius.circular(9),
                 ),
                 child: Text(
@@ -451,7 +451,7 @@ class _SectionLabel extends StatelessWidget {
         padding: const EdgeInsets.fromLTRB(4, 0, 0, 10),
         child: Text(text,
             style: const TextStyle(
-                color: Color(0xFF6B9E78), fontSize: 13,
+                color: Color(0xFF7C4DFF), fontSize: 13,
                 fontWeight: FontWeight.w600, letterSpacing: 0.5)),
       );
 }

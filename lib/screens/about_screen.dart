@@ -14,7 +14,7 @@ class AboutScreen extends StatefulWidget {
 class _AboutScreenState extends State<AboutScreen> {
   String _version = '';
   String _buildNumber = '';
-  String _appName = 'Notify AI';
+  String _appName = 'Magna';
   String _gitCommit = '...';
 
   @override
@@ -69,7 +69,7 @@ class _AboutScreenState extends State<AboutScreen> {
                 width: 80,
                 height: 80,
                 decoration: BoxDecoration(
-                  color: const Color(0xFF6B9E78),
+                  color: const Color(0xFF7C4DFF),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: const Icon(
@@ -95,14 +95,14 @@ class _AboutScreenState extends State<AboutScreen> {
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF2A3A2E),
+                  color: const Color(0xFF3A2E5A),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
                   'v$_version (build $_buildNumber)',
                   style: const TextStyle(
                     fontSize: 14,
-                    color: Color(0xFF6B9E78),
+                    color: Color(0xFF7C4DFF),
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -152,7 +152,7 @@ class _AboutScreenState extends State<AboutScreen> {
                 borderRadius: BorderRadius.circular(12),
               ),
               child: const Text(
-                'Notify AI is an Android notification summarisation app that intercepts notifications from selected apps, batches them, sends them to an AI provider for summarisation, and delivers a new notification containing the summary.',
+                'Magna is an Android notification summarisation app that intercepts notifications from selected apps, batches them, sends them to an AI provider for summarisation, and delivers a new notification containing the summary.',
                 style: TextStyle(
                   fontSize: 14,
                   color: Colors.white70,
@@ -247,7 +247,7 @@ class _AboutScreenState extends State<AboutScreen> {
   }
 
   Future<void> _sendTestNotifications(String testType, int count) async {
-    const platform = MethodChannel('com.craigcarroll.notifyai/permissions');
+    const platform = MethodChannel('xyz.moyelauncher.magna/permissions');
     try {
       await platform.invokeMethod('sendTestNotification', {
         'count': count,
@@ -302,7 +302,7 @@ class _InfoCard extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Icon(icon, color: const Color(0xFF6B9E78), size: 20),
+            Icon(icon, color: const Color(0xFF7C4DFF), size: 20),
             const SizedBox(width: 12),
             Expanded(
               child: Column(
@@ -335,7 +335,7 @@ class _ProviderItem extends StatelessWidget {
         Container(
           width: 8,
           height: 8,
-          decoration: const BoxDecoration(color: Color(0xFF6B9E78), shape: BoxShape.circle),
+          decoration: const BoxDecoration(color: Color(0xFF7C4DFF), shape: BoxShape.circle),
         ),
         const SizedBox(width: 12),
         Expanded(
@@ -373,12 +373,12 @@ class _TestButton extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: const Color(0xFF2A3A2E),
+          color: const Color(0xFF3A2E5A),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Row(
           children: [
-            Icon(icon, color: const Color(0xFF6B9E78), size: 24),
+            Icon(icon, color: const Color(0xFF7C4DFF), size: 24),
             const SizedBox(width: 12),
             Expanded(
               child: Column(
@@ -390,7 +390,7 @@ class _TestButton extends StatelessWidget {
                 ],
               ),
             ),
-            const Icon(Icons.send, color: Color(0xFF6B9E78), size: 18),
+            const Icon(Icons.send, color: Color(0xFF7C4DFF), size: 18),
           ],
         ),
       ),

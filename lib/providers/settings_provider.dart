@@ -12,6 +12,7 @@ class SettingsProvider extends ChangeNotifier {
 
   bool setupComplete = false;
   bool serviceEnabled = true;
+  bool glanceEnabled = false;
 
   String aiProvider = 'ollama';
   String backupProvider1 = '';
@@ -77,6 +78,7 @@ Be brief but informative.''';
     _prefs = await SharedPreferences.getInstance();
     setupComplete = _prefs.getBool('setup_complete') ?? false;
     serviceEnabled = _prefs.getBool('service_enabled') ?? true;
+    glanceEnabled = _prefs.getBool('glance_enabled') ?? false;
     aiProvider = _prefs.getString('ai_provider') ?? 'ollama';
     backupProvider1 = _prefs.getString('backup_provider_1') ?? '';
     backupProvider2 = _prefs.getString('backup_provider_2') ?? '';
@@ -389,6 +391,12 @@ Be brief but informative.''';
   Future<void> setServiceEnabled(bool v) async {
     serviceEnabled = v;
     await _prefs.setBool('service_enabled', v);
+    notifyListeners();
+  }
+
+  Future<void> setGlanceEnabled(bool v) async {
+    glanceEnabled = v;
+    await _prefs.setBool('glance_enabled', v);
     notifyListeners();
   }
 

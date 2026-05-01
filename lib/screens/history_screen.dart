@@ -151,7 +151,7 @@ class _HistoryScreenState extends State<HistoryScreen> with WidgetsBindingObserv
         ],
       ),
       body: RefreshIndicator(
-        color: const Color(0xFF6B9E78),
+        color: const Color(0xFF7C4DFF),
         onRefresh: _load,
         child: Column(
           children: [
@@ -186,7 +186,7 @@ class _HistoryScreenState extends State<HistoryScreen> with WidgetsBindingObserv
             ),
             Expanded(
               child: _loading
-                  ? const Center(child: CircularProgressIndicator(color: Color(0xFF6B9E78)))
+                  ? const Center(child: CircularProgressIndicator(color: Color(0xFF7C4DFF)))
                   : _filtered.isEmpty
                       ? LayoutBuilder(
                           builder: (context, constraints) => SingleChildScrollView(
@@ -230,7 +230,7 @@ class _HistoryScreenState extends State<HistoryScreen> with WidgetsBindingObserv
                                   padding: const EdgeInsets.fromLTRB(0, 16, 0, 8),
                                   child: Text(label,
                                       style: const TextStyle(
-                                          color: Color(0xFF6B9E78), fontSize: 13,
+                                          color: Color(0xFF7C4DFF), fontSize: 13,
                                           fontWeight: FontWeight.w600, letterSpacing: 0.5)),
                                 ),
                                 Container(
@@ -285,7 +285,7 @@ class _Tile extends StatelessWidget {
                 children: [
                   Row(children: [
                     Expanded(child: Text(entry.appName,
-                        style: const TextStyle(color: Color(0xFF6B9E78),
+                        style: const TextStyle(color: Color(0xFF7C4DFF),
                             fontSize: 11, fontWeight: FontWeight.w600))),
                     Text(_time(),
                         style: const TextStyle(color: Colors.white30, fontSize: 11)),

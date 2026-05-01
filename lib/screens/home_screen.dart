@@ -3,12 +3,15 @@ import 'package:provider/provider.dart';
 import '../providers/settings_provider.dart';
 import '../models/provider_config.dart';
 import '../services/permissions_service.dart';
+import '../providers/rules_provider.dart';
 import 'provider_settings_screen.dart';
 import 'app_selector_screen.dart';
 import 'import_export_screen.dart';
 import 'about_screen.dart';
 import 'prompt_settings_screen.dart';
 import 'digest_settings_screen.dart';
+import 'glance_screen.dart';
+import 'rules_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -19,7 +22,7 @@ class HomeScreen extends StatelessWidget {
     final provider = providerById(settings.aiProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Notify AI')),
+      appBar: AppBar(title: const Text('Magna')),
       body: LayoutBuilder(
         builder: (context, constraints) {
           final wide = constraints.maxWidth > 600;
@@ -67,10 +70,55 @@ class HomeScreen extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 8),
+        _Card(
+          child: SwitchListTile(
+            title: const Text('The Glance',
+                style: TextStyle(fontWeight: FontWeight.w500)),
+            subtitle: Text(
+              settings.glanceEnabled
+                  ? 'One persistent summary replaces dozens of pings'
+                  : 'Per-app summary notifications',
+              style: const TextStyle(color: Colors.white38, fontSize: 13),
+            ),
+            value: settings.glanceEnabled,
+            onChanged: settings.setGlanceEnabled,
+          ),
+        ),
+        const SizedBox(height: 8),
+        _Card(
+          child: ListTile(
+            leading: const Icon(Icons.visibility_outlined, color: Color(0xFF7C4DFF)),
+            title: const Text('Glance history'),
+            subtitle: const Text(
+              'View accumulated notifications',
+              style: TextStyle(color: Colors.white38, fontSize: 13),
+            ),
+            trailing: const Icon(Icons.chevron_right, color: Colors.white38),
+            onTap: () => Navigator.push(context,
+                MaterialPageRoute(builder: (_) => const GlanceScreen())),
+          ),
+        ),
+        const SizedBox(height: 8),
+        _Card(
+          child: ListTile(
+            leading: const Icon(Icons.rule, color: Color(0xFF7C4DFF)),
+            title: const Text('Rules'),
+            subtitle: Consumer<RulesProvider>(
+              builder: (_, rules, __) => Text(
+                '${rules.rules.where((r) => r.enabled).length} active rule${rules.rules.where((r) => r.enabled).length == 1 ? '' : 's'}',
+                style: const TextStyle(color: Colors.white38, fontSize: 13),
+              ),
+            ),
+            trailing: const Icon(Icons.chevron_right, color: Colors.white38),
+            onTap: () => Navigator.push(context,
+                MaterialPageRoute(builder: (_) => const RulesScreen())),
+          ),
+        ),
+        const SizedBox(height: 8),
         _Label('Setup'),
         _Card(
           child: ListTile(
-            leading: const Icon(Icons.auto_awesome, color: Color(0xFF6B9E78)),
+            leading: const Icon(Icons.auto_awesome, color: Color(0xFF7C4DFF)),
             title: const Text('AI Provider & Model'),
             subtitle: Text(
               provider?.displayName ?? settings.aiProvider,
@@ -84,7 +132,7 @@ class HomeScreen extends StatelessWidget {
         const SizedBox(height: 8),
         _Card(
           child: ListTile(
-            leading: const Icon(Icons.notifications_active, color: Color(0xFF6B9E78)),
+            leading: const Icon(Icons.notifications_active, color: Color(0xFF7C4DFF)),
             title: const Text('Restart notification listener'),
             subtitle: const Text(
               'Tap if summaries stop appearing after force-stop or battery optimisation',
@@ -98,7 +146,7 @@ class HomeScreen extends StatelessWidget {
                   content: Text(ok
                       ? 'Notification listener restarted'
                       : 'Could not restart listener — toggle it manually in system settings'),
-                  backgroundColor: ok ? const Color(0xFF6B9E78) : Colors.redAccent,
+                  backgroundColor: ok ? const Color(0xFF7C4DFF) : Colors.redAccent,
                 ));
               }
             },
@@ -155,7 +203,7 @@ class HomeScreen extends StatelessWidget {
                       foregroundColor: MaterialStateProperty.resolveWith((states) =>
                           states.contains(MaterialState.selected) ? Colors.white : Colors.white54),
                       backgroundColor: MaterialStateProperty.resolveWith((states) =>
-                          states.contains(MaterialState.selected) ? const Color(0xFF6B9E78) : Colors.transparent),
+                          states.contains(MaterialState.selected) ? const Color(0xFF7C4DFF) : Colors.transparent),
                     ),
                   ),
                 ),
@@ -297,7 +345,7 @@ class HomeScreen extends StatelessWidget {
         _Card(
           child: ListTile(
             leading: const Icon(Icons.info_outline, color: Colors.white54),
-            title: const Text('About Notify AI'),
+            title: const Text('About Magna'),
             subtitle: const Text('Version info, supported providers',
                 style: TextStyle(color: Colors.white38, fontSize: 13)),
             trailing: const Icon(Icons.chevron_right, color: Colors.white38),
@@ -353,15 +401,15 @@ class _SliderTile extends StatelessWidget {
               ),
               Text(valueLabel,
                   style: const TextStyle(
-                      color: Color(0xFF6B9E78), fontWeight: FontWeight.w600)),
+                      color: Color(0xFF7C4DFF), fontWeight: FontWeight.w600)),
             ],
           ),
           SliderTheme(
             data: SliderTheme.of(context).copyWith(
-              activeTrackColor: const Color(0xFF6B9E78),
+              activeTrackColor: const Color(0xFF7C4DFF),
               inactiveTrackColor: const Color(0xFF3A3A3A),
-              thumbColor: const Color(0xFF6B9E78),
-              overlayColor: const Color(0xFF6B9E78).withOpacity(0.2),
+              thumbColor: const Color(0xFF7C4DFF),
+              overlayColor: const Color(0xFF7C4DFF).withOpacity(0.2),
               trackHeight: 3,
             ),
             child: Slider(
@@ -390,7 +438,7 @@ class _Label extends StatelessWidget {
         padding: const EdgeInsets.fromLTRB(4, 8, 0, 8),
         child: Text(text,
             style: const TextStyle(
-                color: Color(0xFF6B9E78), fontSize: 13,
+                color: Color(0xFF7C4DFF), fontSize: 13,
                 fontWeight: FontWeight.w600, letterSpacing: 0.5)),
       );
 }

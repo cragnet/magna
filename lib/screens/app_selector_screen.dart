@@ -199,7 +199,7 @@ class _AppSelectorScreenState extends State<AppSelectorScreen> {
             TextButton(
               onPressed: () => settings.setEnabledApps({}),
               child: const Text('Clear all',
-                  style: TextStyle(color: Color(0xFF6B9E78))),
+                  style: TextStyle(color: Color(0xFF7C4DFF))),
             ),
           IconButton(
             icon: const Icon(Icons.refresh),
@@ -220,12 +220,12 @@ class _AppSelectorScreenState extends State<AppSelectorScreen> {
             decoration: BoxDecoration(
               color: selected.isEmpty
                   ? const Color(0xFF1E1E1E)
-                  : const Color(0xFF2A3A2E),
+                  : const Color(0xFF3A2E5A),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
                 color: selected.isEmpty
                     ? Colors.white10
-                    : const Color(0xFF4A7A56),
+                    : const Color(0xFF5A3DBF),
                 width: 1,
               ),
             ),
@@ -236,7 +236,7 @@ class _AppSelectorScreenState extends State<AppSelectorScreen> {
                   selected.isEmpty ? Icons.touch_app_outlined : Icons.check_circle,
                   color: selected.isEmpty
                       ? Colors.white30
-                      : const Color(0xFF6B9E78),
+                      : const Color(0xFF7C4DFF),
                   size: 18,
                 ),
                 const SizedBox(width: 10),
@@ -252,7 +252,7 @@ class _AppSelectorScreenState extends State<AppSelectorScreen> {
                             Text(
                               '${selected.length} app${selected.length == 1 ? '' : 's'} selected',
                               style: const TextStyle(
-                                color: Color(0xFF6B9E78),
+                                color: Color(0xFF7C4DFF),
                                 fontWeight: FontWeight.w600,
                                 fontSize: 13,
                               ),
@@ -307,7 +307,7 @@ class _AppSelectorScreenState extends State<AppSelectorScreen> {
                           fontSize: 12)),
                   selected: _showEnabledOnly,
                   onSelected: (v) => setState(() => _showEnabledOnly = v),
-                  selectedColor: const Color(0xFF4A7A56),
+                  selectedColor: const Color(0xFF5A3DBF),
                   backgroundColor: const Color(0xFF2A2A2A),
                   checkmarkColor: Colors.white,
                   padding: EdgeInsets.zero,
@@ -334,7 +334,7 @@ class _AppSelectorScreenState extends State<AppSelectorScreen> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        CircularProgressIndicator(color: Color(0xFF6B9E78)),
+                        CircularProgressIndicator(color: Color(0xFF7C4DFF)),
                         SizedBox(height: 16),
                         Text('Scanning installed apps…',
                             style: TextStyle(color: Colors.white38)),
@@ -426,7 +426,7 @@ class _AppSelectorScreenState extends State<AppSelectorScreen> {
                                           icon: Icon(
                                             Icons.filter_list,
                                             color: settings.getAppThreshold(pkg) != null
-                                                ? const Color(0xFF6B9E78)
+                                                ? const Color(0xFF7C4DFF)
                                                 : Colors.white38,
                                             size: 20,
                                           ),
@@ -452,7 +452,7 @@ class _AppSelectorScreenState extends State<AppSelectorScreen> {
                                           icon: Icon(
                                             Icons.timer,
                                             color: settings.getAppCooldown(pkg) > 0
-                                                ? const Color(0xFF6B9E78)
+                                                ? const Color(0xFF7C4DFF)
                                                 : Colors.white38,
                                             size: 20,
                                           ),
@@ -592,10 +592,10 @@ class _ThresholdPickerDialogState extends State<_ThresholdPickerDialog> {
               const SizedBox(height: 8),
               SliderTheme(
                 data: SliderTheme.of(context).copyWith(
-                  activeTrackColor: const Color(0xFF6B9E78),
+                  activeTrackColor: const Color(0xFF7C4DFF),
                   inactiveTrackColor: const Color(0xFF3A3A3A),
-                  thumbColor: const Color(0xFF6B9E78),
-                  overlayColor: const Color(0xFF6B9E78).withOpacity(0.2),
+                  thumbColor: const Color(0xFF7C4DFF),
+                  overlayColor: const Color(0xFF7C4DFF).withOpacity(0.2),
                   trackHeight: 3,
                 ),
                 child: Slider(
@@ -712,10 +712,10 @@ class _CooldownPickerDialogState extends State<_CooldownPickerDialog> {
               const SizedBox(height: 8),
               SliderTheme(
                 data: SliderTheme.of(context).copyWith(
-                  activeTrackColor: const Color(0xFF6B9E78),
+                  activeTrackColor: const Color(0xFF7C4DFF),
                   inactiveTrackColor: const Color(0xFF3A3A3A),
-                  thumbColor: const Color(0xFF6B9E78),
-                  overlayColor: const Color(0xFF6B9E78).withOpacity(0.2),
+                  thumbColor: const Color(0xFF7C4DFF),
+                  overlayColor: const Color(0xFF7C4DFF).withOpacity(0.2),
                   trackHeight: 3,
                 ),
                 child: Slider(

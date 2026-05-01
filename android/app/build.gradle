@@ -17,7 +17,7 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    namespace "com.craigcarroll.notifyai"
+    namespace "xyz.moyelauncher.magna"
     compileSdk flutter.compileSdkVersion
     // ndkVersion removed - not needed for this app
 
@@ -35,7 +35,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.craigcarroll.notifyai"
+        applicationId "xyz.moyelauncher.magna"
         minSdk 26
         targetSdk flutter.targetSdkVersion
         versionCode localProperties.getProperty("flutter.versionCode")?.toInteger() ?: 1

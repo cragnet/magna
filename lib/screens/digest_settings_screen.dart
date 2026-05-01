@@ -48,7 +48,7 @@ class DigestSettingsScreen extends StatelessWidget {
                   secondary: Icon(t.icon, color: Colors.white54),
                   value: t.value,
                   groupValue: settings.digestScheduleType,
-                  activeColor: const Color(0xFF6B9E78),
+                  activeColor: const Color(0xFF7C4DFF),
                   onChanged: (v) => settings.setDigestScheduleType(v!),
                 )).toList(),
               ),
@@ -66,7 +66,7 @@ class DigestSettingsScreen extends StatelessWidget {
                         style: TextStyle(color: Colors.white38, fontSize: 12)),
                     value: 'all',
                     groupValue: settings.digestAppFilter,
-                    activeColor: const Color(0xFF6B9E78),
+                    activeColor: const Color(0xFF7C4DFF),
                     onChanged: (v) => settings.setDigestAppFilter(v!),
                   ),
                   const Divider(color: Colors.white10, height: 1),
@@ -76,7 +76,7 @@ class DigestSettingsScreen extends StatelessWidget {
                         style: TextStyle(color: Colors.white38, fontSize: 12)),
                     value: 'include_only',
                     groupValue: settings.digestAppFilter,
-                    activeColor: const Color(0xFF6B9E78),
+                    activeColor: const Color(0xFF7C4DFF),
                     onChanged: (v) => settings.setDigestAppFilter(v!),
                   ),
                   const Divider(color: Colors.white10, height: 1),
@@ -86,7 +86,7 @@ class DigestSettingsScreen extends StatelessWidget {
                         style: TextStyle(color: Colors.white38, fontSize: 12)),
                     value: 'exclude',
                     groupValue: settings.digestAppFilter,
-                    activeColor: const Color(0xFF6B9E78),
+                    activeColor: const Color(0xFF7C4DFF),
                     onChanged: (v) => settings.setDigestAppFilter(v!),
                   ),
                 ],
@@ -155,8 +155,8 @@ class DigestSettingsScreen extends StatelessWidget {
                     ),
                   const Divider(color: Colors.white10, height: 1),
                   ListTile(
-                    leading: const Icon(Icons.add, color: Color(0xFF6B9E78)),
-                    title: const Text('Add time', style: TextStyle(color: Color(0xFF6B9E78))),
+                    leading: const Icon(Icons.add, color: Color(0xFF7C4DFF)),
+                    title: const Text('Add time', style: TextStyle(color: Color(0xFF7C4DFF))),
                     onTap: () async {
                       final time = await showTimePicker(
                         context: context,
@@ -326,7 +326,7 @@ class DigestSettingsScreen extends StatelessWidget {
       future: PermissionsService.getInstalledApps(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
-          return const Center(child: CircularProgressIndicator(color: Color(0xFF6B9E78)));
+          return const Center(child: CircularProgressIndicator(color: Color(0xFF7C4DFF)));
         }
         final apps = snapshot.data!;
         final filtered = apps
@@ -354,7 +354,7 @@ class DigestSettingsScreen extends StatelessWidget {
                     subtitle: Text(pkg,
                         style: const TextStyle(color: Colors.white38, fontSize: 11)),
                     value: isSelected,
-                    activeColor: const Color(0xFF6B9E78),
+                    activeColor: const Color(0xFF7C4DFF),
                     onChanged: (_) => settings.toggleDigestApp(pkg),
                   ),
                   if (!isLast) const Divider(color: Colors.white10, height: 1),
@@ -475,7 +475,7 @@ class _DigestPromptScreenState extends State<DigestPromptScreen> {
                       child: Text(
                         isDefault ? 'Using default prompt' : 'Custom prompt active',
                         style: TextStyle(
-                          color: isDefault ? Colors.white38 : const Color(0xFF6B9E78),
+                          color: isDefault ? Colors.white38 : const Color(0xFF7C4DFF),
                           fontSize: 12,
                         ),
                       ),
@@ -497,7 +497,7 @@ class _DigestPromptScreenState extends State<DigestPromptScreen> {
                         : const Icon(Icons.save_outlined, size: 18),
                     label: Text(_saved ? 'Saved' : 'Save prompt'),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: _saved ? const Color(0xFF6B9E78) : null,
+                      backgroundColor: _saved ? const Color(0xFF7C4DFF) : null,
                     ),
                   ),
                 ),
@@ -568,7 +568,7 @@ class _SectionLabel extends StatelessWidget {
     child: Text(
       text,
       style: const TextStyle(
-        color: Color(0xFF6B9E78),
+        color: Color(0xFF7C4DFF),
         fontSize: 13,
         fontWeight: FontWeight.w600,
         letterSpacing: 0.5,
@@ -607,13 +607,13 @@ class _VariableItem extends StatelessWidget {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
           decoration: BoxDecoration(
-            color: const Color(0xFF2A3A2E),
+            color: const Color(0xFF3A2E5A),
             borderRadius: BorderRadius.circular(4),
           ),
           child: Text(
             name,
             style: const TextStyle(
-              color: Color(0xFF6B9E78),
+              color: Color(0xFF7C4DFF),
               fontSize: 12,
               fontFamily: 'monospace',
               fontFamilyFallback: ['Courier'],
