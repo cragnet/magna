@@ -42,6 +42,13 @@ class SettingsProvider extends ChangeNotifier {
   // Theme: 0 = dark, 1 = light, 2 = system
   int themeMode = 0;
 
+  // Read aloud
+  bool readAloudEnabled = false;
+  bool readAloudGlanceOnly = true;
+
+  // Premium
+  bool premiumUnlocked = false;
+
   // Digest settings
   bool digestEnabled = false;
   String digestScheduleType = 'fixed_times'; // fixed_times, interval, daily, weekly
@@ -70,6 +77,12 @@ Provide a well-structured digest. Highlight time-sensitive items and anything re
   Map<String, int?> notificationColors = {}; // packageName -> color value
   Map<String, int> appThresholds = {}; // packageName -> custom threshold (null means use global)
 
+  // Rolling history settings
+  bool rollingHistoryEnabled = false;
+  List<String> rollingHistoryDisabledApps = []; // packages excluded from rolling history
+  int rollingHistoryMaxMessages = 30;
+  int rollingHistoryMaxAgeMinutes = 30;
+
   // Default prompt template
   static const String defaultPrompt = '''Summarize the following notifications concisely.
 
@@ -97,6 +110,9 @@ Be brief but informative.''';
     retainOriginalActions = _prefs.getBool('retain_original_actions') ?? true;
     customPrompt = _prefs.getString('custom_prompt') ?? defaultPrompt;
     themeMode = _prefs.getInt('theme_mode') ?? 0;
+    readAloudEnabled = _prefs.getBool('read_aloud_enabled') ?? false;
+    readAloudGlanceOnly = _prefs.getBool('read_aloud_glance_only') ?? true;
+    premiumUnlocked = _prefs.getBool('premium_unlocked') ?? false;
     digestEnabled = _prefs.getBool('digest_enabled') ?? false;
     digestScheduleType = _prefs.getString('digest_schedule_type') ?? 'fixed_times';
     digestIntervalMinutes = _prefs.getInt('digest_interval_minutes') ?? 120;
@@ -138,6 +154,12 @@ Be brief but informative.''';
           MapEntry(key, value as int));
       } catch (_) {}
     }
+
+    // Load rolling history settings
+    rollingHistoryEnabled = _prefs.getBool('rolling_history_enabled') ?? false;
+    rollingHistoryDisabledApps = _prefs.getStringList('rolling_history_disabled_apps') ?? [];
+    rollingHistoryMaxMessages = _prefs.getInt('rolling_history_max_messages') ?? 30;
+    rollingHistoryMaxAgeMinutes = _prefs.getInt('rolling_history_max_age_minutes') ?? 30;
 
     for (final p in ['claude', 'openai', 'ollama', 'openrouter', 'gemini', 'gemini_nano', 'local']) {
       final model = _prefs.getString('model_$p');
@@ -293,6 +315,24 @@ Be brief but informative.''';
   Future<void> setThemeMode(int v) async {
     themeMode = v;
     await _prefs.setInt('theme_mode', v);
+    notifyListeners();
+  }
+
+  Future<void> setReadAloudEnabled(bool v) async {
+    readAloudEnabled = v;
+    await _prefs.setBool('read_aloud_enabled', v);
+    notifyListeners();
+  }
+
+  Future<void> setReadAloudGlanceOnly(bool v) async {
+    readAloudGlanceOnly = v;
+    await _prefs.setBool('read_aloud_glance_only', v);
+    notifyListeners();
+  }
+
+  Future<void> setPremiumUnlocked(bool v) async {
+    premiumUnlocked = v;
+    await _prefs.setBool('premium_unlocked', v);
     notifyListeners();
   }
 
@@ -499,6 +539,46 @@ Be brief but informative.''';
     final colorsMap = notificationColors.map((key, value) =>
       MapEntry(key, value));
     await _prefs.setString('notification_colors', jsonEncode(colorsMap));
+  }
+
+  // Rolling history helpers
+  bool isRollingHistoryEnabledForApp(String packageName) {
+    if (!rollingHistoryEnabled) return false;
+    return !rollingHistoryDisabledApps.contains(packageName);
+  }
+
+  Future<void> setRollingHistoryEnabled(bool v) async {
+    rollingHistoryEnabled = v;
+    await _prefs.setBool('rolling_history_enabled', v);
+    notifyListeners();
+  }
+
+  Future<void> setRollingHistoryDisabledApps(List<String> apps) async {
+    rollingHistoryDisabledApps = List<String>.from(apps);
+    await _prefs.setStringList('rolling_history_disabled_apps', rollingHistoryDisabledApps);
+    notifyListeners();
+  }
+
+  Future<void> toggleRollingHistoryForApp(String packageName, bool enabled) async {
+    final updated = List<String>.from(rollingHistoryDisabledApps);
+    if (enabled) {
+      updated.remove(packageName);
+    } else {
+      if (!updated.contains(packageName)) updated.add(packageName);
+    }
+    await setRollingHistoryDisabledApps(updated);
+  }
+
+  Future<void> setRollingHistoryMaxMessages(int v) async {
+    rollingHistoryMaxMessages = v;
+    await _prefs.setInt('rolling_history_max_messages', v);
+    notifyListeners();
+  }
+
+  Future<void> setRollingHistoryMaxAgeMinutes(int v) async {
+    rollingHistoryMaxAgeMinutes = v;
+    await _prefs.setInt('rolling_history_max_age_minutes', v);
+    notifyListeners();
   }
 
   // Method to get API keys for export
