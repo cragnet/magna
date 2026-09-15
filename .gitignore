@@ -16,3 +16,6 @@ android/local.properties
 
 # OS
 .DS_Store
+# Build artifacts (prevent re-leak)
+debug_symbols/
+android/.gradle/
